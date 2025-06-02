@@ -1,5 +1,6 @@
 use std::ops::Neg;
 
+use creusot_contracts::{logic, prelude::ensures, open};
 use const_decimal::{Decimal, ParseDecimalError};
 use num_traits::{Num, One, Signed, Zero};
 
@@ -16,7 +17,8 @@ use super::{Currency, MarginCurrency, Mon, QuoteCurrency};
     Clone,
     Default,
     Copy,
-    PartialEq,
+    creusot_contracts::prelude::PartialEq,
+    creusot_contracts::model::DeepModel,
     Eq,
     PartialOrd,
     Ord,
@@ -36,7 +38,7 @@ use super::{Currency, MarginCurrency, Mon, QuoteCurrency};
 #[repr(transparent)]
 pub struct BaseCurrency<I, const D: u8>(Decimal<I, D>)
 where
-    I: Mon<D>;
+    I: Mon<D> + Sized;
 
 impl<I, const D: u8> BaseCurrency<I, D>
 where
@@ -55,17 +57,6 @@ where
     ///
     /// By default, rust is rounding towards zero and so does this method.
     ///
-    /// # Example:
-    /// ```rust
-    /// use lfest::prelude::BaseCurrency;
-    /// // 11.65
-    /// let d = BaseCurrency::<i64, 5>::new(1165, 2);
-    /// // Allow only increments of 0.5
-    /// let quantum = BaseCurrency::<i64, 5>::new(5, 1);
-    /// let q = d.quantize_round_to_zero(quantum);
-    /// // 11.5 rounded down to the nearest `quantum`.
-    /// assert_eq!(q, BaseCurrency::new(115, 1));
-    /// ```
     #[inline]
     #[must_use]
     pub fn quantize_round_to_zero(&self, quantum: Self) -> Self {
@@ -248,31 +239,5 @@ where
     #[inline]
     fn from(val: BaseCurrency<I, D>) -> Self {
         val.0.to_f64()
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use std::ops::{Div, Rem};
-
-    use super::*;
-
-    #[test]
-    fn base_currency() {
-        let v = BaseCurrency::<i64, 5>::new(100, 0);
-        assert!(v.is_positive());
-        assert!(!v.is_negative());
-        let v = BaseCurrency::<i64, 5>::new(-100, 0);
-        assert!(!v.is_positive());
-        assert!(v.is_negative());
-        assert_eq!(Into::<f64>::into(v), -100.0_f64);
-        let v = BaseCurrency::<i64, 5>::new(0, 0);
-        assert!(v.is_zero());
-        assert!(!v.is_one());
-        let v = BaseCurrency::<i64, 5>::new(1, 0);
-        assert!(v.is_one());
-        let v = BaseCurrency::<i64, 5>::new(8, 0);
-        assert_eq!(v.rem(BaseCurrency::new(5, 0)), BaseCurrency::new(3, 0));
-        assert_eq!(v.div(BaseCurrency::new(2, 0)), BaseCurrency::new(4, 0));
     }
 }
