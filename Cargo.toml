@@ -1,0 +1,16 @@
+[package]
+name = "creusot_test"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+creusot-contracts = "0.6.0-dev"
+derive_more = { version = "2", features = ["full"]}
+num-traits = "0.2"
+const-decimal = { git = "https://github.com/OliverNChalk/const-decimal", features = ["serde"], version = "0.3.0" }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(creusot)'] }
+
+[patch.crates-io]
+creusot-contracts = { path = "/home/magewe/MathisWellmann/creusot/creusot-contracts" }

@@ -1,0 +1,24 @@
+(* #"/home/magewe/MathisWellmann/creusot_test/src/lib.rs" 5 0 5 29 *)
+
+let%span slib = "/home/magewe/MathisWellmann/creusot_test/src/lib.rs" 6 8 6 9
+let%span slib'0 = "/home/magewe/MathisWellmann/creusot_test/src/lib.rs" 3 11 3 25
+let%span slib'1 = "/home/magewe/MathisWellmann/creusot_test/src/lib.rs" 4 10 4 27
+
+use creusot.int.Int64
+use mach.int.Int
+use creusot.prelude.Any
+
+constant v_MAX : Int64.t = (9223372036854775807 : Int64.t)
+
+meta "compute_max_steps" 1000000
+
+let rec add_one[#"/home/magewe/MathisWellmann/creusot_test/src/lib.rs" 5 0 5 29] (a:Int64.t) (return'  (x:Int64.t))= {[@expl:add_one requires] [%#slib'0] Int64.to_int a
+  < Int64.to_int (v_MAX : Int64.t)}
+  (! bb0
+  [ bb0 = s0
+    [ s0 = Int64.add {a'0} {[%#slib] (1 : Int64.t)} (fun (_ret:Int64.t) ->  [ &_0 <- _ret ] s1) | s1 = return''0 {_0} ]
+   ]
+  ) [ & _0 : Int64.t = Any.any_l () | & a'0 : Int64.t = a ] 
+  [ return''0 (result:Int64.t)-> {[@expl:add_one ensures] [%#slib'1] Int64.to_int result = Int64.to_int a + 1}
+    (! return' {result}) ]
+  
